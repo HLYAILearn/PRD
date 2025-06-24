@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>AI PRD Agent</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</head>
+<body>
+  <div class="container">
+    <h1>产品需求生成器（AI PRD Agent）</h1>
+    <textarea id="input" placeholder="请输入你的产品想法..."></textarea>
+    <select id="format">
+      <option value="markdown">Markdown</option>
+      <option value="pdf">PDF</option>
+    </select>
+    <button onclick="generatePRD()">生成</button>
+    <h2>生成结果：</h2>
+    <pre id="output"></pre>
+  </div>
+
+  <script>
+    async function generatePRD() {
+      const input = document.getElementById("input").value;
+      const format = document.getElementById("format").value;
+      const res = await fetch("/generate_prd", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({input, format})
+      });
+
+      if (format === "pdf") {
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = "prd.pdf";
+        link.click();
+        window.URL.revokeObjectURL(url);
+      } else {
+        const data = await res.json();
+        document.getElementById("output").textContent = data.markdown;
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+jinja2
+pydantic
+requests
+markdown2
+weasyprint
+python-dotenv
